@@ -1,15 +1,47 @@
 from config import token
 import telebot
+import random
+import requests
+import os
+print(os.listdir('images'))
 
+ 
+ 
 bot = telebot.TeleBot(token)
 
-
+def get_duck_image_url():    
+        url = 'https://random-d.uk/api/random'
+        res = requests.get(url)
+        data = res.json()
+        return data['url']
+    
+    
+@bot.message_handler(commands=['duck'])
+def duck(message):
+        '''По команде duck вызывает функцию get_duck_image_url и отправляет URL изображения утки'''
+        image_url = get_duck_image_url()
+        bot.reply_to(message, image_url)
+        
+def get_dog_image_url():    
+        url = 'https://dog.ceo/api/breeds/image/random'
+        res2 = requests.get(url)
+        data = res2.json()
+        return data['url']
+    
+    
+@bot.message_handler(commands=['dog'])
+def dog(message):
+        '''По команде dog вызывает функцию get_dog_image_url и отправляет URL изображения собаки'''
+        image_url = get_dog_image_url()
+        bot.reply_to(message, image_url)
+        
+        
 # Handle '/start' and '/help'
 @bot.message_handler(commands=['help', 'start'])
 def send_welcome(message):
     bot.reply_to(message, """\
 Hi there, I am Student_IvanBot.
-I am here to echo your kind words back to you. Just say anything nice and I'll say the exact same thing to you!\
+I can react to your messages. Just repeat them like a parrot :)\
 """)
 
 
@@ -18,13 +50,26 @@ I am here to echo your kind words back to you. Just say anything nice and I'll s
 def echo_message(message):
     bot.reply_to(message, message.text)
 
-@bot.message_handler(command=['help'])
-def send_welcome(message):
-    bot.reply_to(message, '''\Hello! I can react to your messages. Just repeat them like a parrot :)''')
-    
+@bot.message_handler(commands=['mem'])
+def send_mem(message):
+    with open('images/mem1.jpeg', 'rb') as f:  
+        bot.send_photo(message.chat.id, f) 
+        
+@bot.message_handler(commands=['mems'])
+def send_mems(message):
+    img_name = random.choice(os.listdir('images'))
+    with open(f'images/{img_name}', 'rb') as f:  
+            bot.send_photo(message.chat.id, f) 
+           
 @bot.message_handler(content_types=['photo'])
 def send_foto(message):
     bot.reply_to(message, 'Not gonna lie, cool photo!')
 
+@bot.message_handler(commands=['ping'])
+def on_ping(message):
+    bot.reply_to(message, "Still alive and kicking!")
+
 bot.infinity_polling()
+
+
 
