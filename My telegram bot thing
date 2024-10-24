@@ -23,7 +23,7 @@ def duck(message):
         bot.reply_to(message, image_url)
         
 def get_dog_image_url():    
-        url = 'https://dog.ceo/api/breeds/image/random'
+        url = 'https://random.dog/woof.json'
         res2 = requests.get(url)
         data = res2.json()
         return data['url']
@@ -70,6 +70,4 @@ def on_ping(message):
     bot.reply_to(message, "Still alive and kicking!")
 
 bot.infinity_polling()
-
-
 
